@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Đen - Spotify</title>
+        <title>Spotify</title>
         <!-- Font Awesome CDN -->
         <link
             rel="stylesheet"
@@ -21,7 +21,7 @@
             <aside class="sidebar">
                 <div class="sidebar-header">
                     <div class="logo">
-                        <i class="fab fa-spotify"></i>
+                        <i class="back-btn fab fa-spotify"></i>
                     </div>
                 </div>
 
@@ -35,79 +35,132 @@
                     </div>
 
                     <div class="nav-tabs">
-                        <button class="nav-tab active">Playlists</button>
-                        <button class="nav-tab">Artists</button>
+                        <button class="x-tab">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <button class="nav-tab active" data-type="playlist">
+                            Playlists
+                        </button>
+                        <button class="nav-tab" data-type="artist">
+                            Artists
+                        </button>
+                        <button class="nav-tab" data-type="album">
+                            Albums
+                        </button>
                     </div>
 
                     <div class="search-library">
-                        <button class="search-library-btn">
+                        <div class="search-library-btn">
                             <i class="fas fa-search"></i>
-                        </button>
-                        <button class="sort-btn">
-                            Recents
-                            <i class="fas fa-list"></i>
-                        </button>
+                        </div>
+                        <div class="sort-btn">
+                            <span class="sort-text">Recents</span>
+                            <i class="fas fa-list sort-view-icon"></i>
+                        </div>
+                        <div class="sort-dropdown">
+                            <div class="dropdown-title">Sort by</div>
+                            <div class="dropdown-list" data-sort="recent">
+                                Recents
+                            </div>
+                            <div class="dropdown-list" data-sort="alphabetical">
+                                Alphabetical
+                            </div>
+                            <div class="view-style-icons">
+                                <i
+                                    class="fa-solid fa-bars view-style-icon"
+                                    data-view-style="compact-list"
+                                ></i>
+                                <i
+                                    class="fa-solid fa-list view-style-icon"
+                                    data-view-style="default-list"
+                                ></i>
+                                <i
+                                    class="fa-solid fa-table-cells view-style-icon"
+                                    data-view-style="compact-grid"
+                                ></i>
+                                <i
+                                    class="fa-solid fa-border-all view-style-icon"
+                                    data-view-style="default-grid"
+                                ></i>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="library-content">
-                        <div class="library-item active">
-                            <div class="item-icon liked-songs">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <div class="item-info">
-                                <div class="item-title">Liked Songs</div>
-                                <div class="item-subtitle">
-                                    <i class="fas fa-thumbtack"></i>
-                                    Playlist • 3 songs
+                        <div class="library-content-liked">
+                            <div
+                                class="library-item active"
+                                data-type="playlist"
+                            >
+                                <div class="item-icon liked-songs">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-title liked">
+                                        Liked Songs
+                                    </div>
+                                    <div class="item-subtitle">
+                                        <i
+                                            class="fas fa-thumbtack item-pin"
+                                        ></i>
+                                        <span class="item-type">Playlist</span>
+                                        <span class="item-songs"
+                                            >• 3 songs</span
+                                        >
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="library-item">
-                            <img
-                                src="placeholder.svg?height=48&width=48"
-                                alt="Đen"
-                                class="item-image"
-                            />
-                            <div class="item-info">
-                                <div class="item-title">Đen</div>
-                                <div class="item-subtitle">Artist</div>
+                        <div class="library-content-followed">
+                            <div class="library-item" data-type="artist">
+                                <img
+                                    src="placeholder.svg?height=48&width=48"
+                                    alt="Đen"
+                                    class="item-image"
+                                />
+                                <div class="item-info">
+                                    <div class="item-title">Đen</div>
+                                    <div class="item-subtitle">Artist</div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="library-item">
-                            <img
-                                src="placeholder.svg?height=48&width=48"
-                                alt="Trúc Nhân"
-                                class="item-image"
-                            />
-                            <div class="item-info">
-                                <div class="item-title">Trúc Nhân</div>
-                                <div class="item-subtitle">Artist</div>
+                            <div class="library-item" data-type="artist">
+                                <img
+                                    src="placeholder.svg?height=48&width=48"
+                                    alt="Trúc Nhân"
+                                    class="item-image"
+                                />
+                                <div class="item-info">
+                                    <div class="item-title">Trúc Nhân</div>
+                                    <div class="item-subtitle">Artist</div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="library-item">
-                            <img
-                                src="placeholder.svg?height=48&width=48"
-                                alt="24.03"
-                                class="item-image"
-                            />
-                            <div class="item-info">
-                                <div class="item-title">24.03</div>
-                                <div class="item-subtitle">Playlist • Han</div>
+                            <div class="library-item" data-type="playlist">
+                                <img
+                                    src="placeholder.svg?height=48&width=48"
+                                    alt="24.03"
+                                    class="item-image"
+                                />
+                                <div class="item-info">
+                                    <div class="item-title">24.03</div>
+                                    <div class="item-subtitle">
+                                        <span class="item-type">Playlist</span>
+                                        <span class="item-songs">• Han</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="library-item">
-                            <img
-                                src="placeholder.svg?height=48&width=48"
-                                alt="Thùy Chi"
-                                class="item-image"
-                            />
-                            <div class="item-info">
-                                <div class="item-title">Thùy Chi</div>
-                                <div class="item-subtitle">Artist</div>
+                            <div class="library-item" data-type="artist">
+                                <img
+                                    src="placeholder.svg?height=48&width=48"
+                                    alt="Thùy Chi"
+                                    class="item-image"
+                                />
+                                <div class="item-info">
+                                    <div class="item-title">Thùy Chi</div>
+                                    <div class="item-subtitle">Artist</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -119,7 +172,7 @@
                 <header class="main-header">
                     <div class="search-container">
                         <div class="search-box">
-                            <button class="home-btn">
+                            <button class="home-btn back-btn">
                                 <i class="fas fa-home"></i>
                             </button>
                             <div class="search-input-wrapper">
@@ -390,6 +443,7 @@
                         <button class="play-btn-large">
                             <i class="fas fa-play"></i>
                         </button>
+                        <button class="toggle-btn"></button>
                     </section>
 
                     <!-- Popular Tracks -->
@@ -459,6 +513,89 @@
                             </div>
                         </div>
                     </section>
+
+                    <!-- Create Playlists -->
+                    <section class="create-playlist">
+                        <div class="playlist-header">
+                            <div class="playlist-cover">
+                                <label for="uploadCover" class="upload-label">
+                                    <img
+                                        id="playlistImage"
+                                        src="placeholder.svg"
+                                        alt="Playlist cover"
+                                        class="playlist-img"
+                                    />
+                                    <input
+                                        type="file"
+                                        id="uploadCover"
+                                        accept="image/*"
+                                        hidden
+                                    />
+                                    <div class="upload-overlay">
+                                        <i class="fa-solid fa-pencil"></i>
+                                        Choose photo
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="playlist-info">
+                                <p class="playlist-type">Public Playlist</p>
+                                <h1 class="playlist-title">My Playlist #3</h1>
+                                <p class="playlist-owner">By You</p>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Playlist Form -->
+                    <div class="upload-form" id="uploadForm">
+                        <div class="form-content">
+                            <h2>Edit details</h2>
+                            <button class="playlist-cancel">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                            <div class="playlist-content">
+                                <label
+                                    for="uploadCover"
+                                    class="upload-label-modal"
+                                >
+                                    <img
+                                        id="playlistImage"
+                                        src="placeholder.svg"
+                                        alt="Playlist cover"
+                                        class="playlist-img-modal"
+                                    />
+                                    <input
+                                        type="file"
+                                        id="uploadCover"
+                                        accept="image/*"
+                                        hidden
+                                    />
+                                    <div class="upload-overlay">
+                                        <i class="fa-solid fa-pencil"></i>
+                                        Choose photo
+                                    </div>
+                                </label>
+                                <div class="playlist-info">
+                                    <input
+                                        type="text"
+                                        placeholder="My Playlist #3"
+                                    />
+                                    <textarea
+                                        class="playlist-bio"
+                                        placeholder="Add an optional description"
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div class="form-action">
+                                <button class="playlist-save">Save</button>
+                            </div>
+
+                            <p class="playlist-warn">
+                                By processing, you agree to give Spotify access
+                                to the image you choose to upload. Please make
+                                sure you have the right to upload the image.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </main>
 

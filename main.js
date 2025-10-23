@@ -1,5 +1,19 @@
 import httpRequest from "./utils/httpRequest.js";
 import { initTooltip } from "./utils/tooltip.js";
+import { initSidebar } from "./utils/sidebar.js";
+import { searchInSidebar } from "./utils/sidebar.js";
+import { initContextMenu } from "./utils/sidebar.js";
+import { renderTracks } from "./components/tracks.js";
+import { renderArtists } from "./components/artists.js";
+import { filterButtons } from "./utils/sidebar.js";
+import { handleDetailClick } from "./components/detail.js";
+import { initBackToHome } from "./components/detail.js";
+import {
+    initPlaylists,
+    showMyPlaylist,
+    showPlaylistFollowed,
+    initEditPlaylistUI,
+} from "./components/playlists.js";
 
 // Auth Modal Functionality
 document.addEventListener("DOMContentLoaded", function () {
@@ -188,7 +202,14 @@ document.addEventListener("DOMContentLoaded", function () {
 // Other functionality
 document.addEventListener("DOMContentLoaded", async function () {
     // TODO: Implement other functionality here
-    const artists = await httpRequest.get("/artists");
+    const res = await httpRequest.get("/tracks/trending");
+    renderTracks(res.tracks);
+});
+
+document.addEventListener("DOMContentLoaded", async function () {
+    // TODO: Implement other functionality here
+    const res = await httpRequest.get("/artists/trending");
+    renderArtists(res.artists);
 });
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -252,4 +273,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Khởi tạo tooltip
     initTooltip();
+});
+
+document.querySelector(".hits-grid").addEventListener("click", (e) => {
+    const card = e.target.closest(".hit-card, .artist-card");
+    if (!card) return;
+    handleDetailClick(card);
+});
+
+document.querySelector(".artists-grid").addEventListener("click", (e) => {
+    const card = e.target.closest(".artist-card");
+    if (!card) return;
+    handleDetailClick(card);
+});
+
+document.addEventListener("DOMContentLoaded", async function () {
+    initBackToHome();
+
+    initSidebar();
+    searchInSidebar();
+
+    await showPlaylistFollowed(); // render playlists followed
+    await showMyPlaylist(); // render liked + user playlists
+
+    // Bind events sau khi render xong
+    initPlaylists();
+    initEditPlaylistUI();
+    initContextMenu();
+    filterButtons();
 });
