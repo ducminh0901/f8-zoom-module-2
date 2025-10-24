@@ -11,7 +11,6 @@ import { initBackToHome } from "./components/detail.js";
 import {
     initPlaylists,
     showMyPlaylist,
-    showPlaylistFollowed,
     initEditPlaylistUI,
 } from "./components/playlists.js";
 
@@ -293,7 +292,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     initSidebar();
     searchInSidebar();
 
-    await showPlaylistFollowed(); // render playlists followed
     await showMyPlaylist(); // render liked + user playlists
 
     // Bind events sau khi render xong

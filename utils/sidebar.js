@@ -1,6 +1,4 @@
-let currentSortType = "recent";
-
-import { sortAndRenderPlaylists } from "../components/playlists.js";
+let currentSortType = "recent"; // Mặc định là recent
 
 export function initSidebar() {
     const sortBtn = document.querySelector(".sort-btn");
