@@ -1,6 +1,8 @@
 import httpRequest from "../utils/httpRequest.js";
+import { initSidebar } from "../utils/sidebar.js";
 
-const DEFAULT_IMG = "/placeholder.svg";
+const DEFAULT_IMG =
+    "https://community.spotify.com/t5/image/serverpage/image-id/196380iDD24539B5FCDEAF9/image-size/medium?v=v2&px=400";
 
 function getPlaylistImage(imgUrl) {
     return imgUrl || DEFAULT_IMG;
@@ -45,6 +47,8 @@ export async function showMyPlaylist() {
     try {
         const data = await httpRequest.get("/me/playlists");
         renderLikedPlaylist(data.playlists);
+
+        initSidebar();
     } catch (err) {
         console.error("Không thể tải playlist", err);
     }
@@ -101,16 +105,20 @@ export function initEditPlaylistUI() {
     const sectionArtists = document.querySelector(".artists-section");
     const playlistContainer = document.querySelector(".library-content-liked");
     const editSection = document.querySelector(".create-playlist");
+    const artistHero = document.querySelector(".artist-hero");
+    const artistControl = document.querySelector(".artist-controls");
+    const artistPopular = document.querySelector(".popular-section");
     const uploadForm = document.getElementById("uploadForm");
 
-    const playlistImg = editSection.querySelector("#playlistImage");
     const playlistTitle = editSection.querySelector(".playlist-title");
     const playlistOwner = editSection.querySelector(".playlist-owner");
 
     const modalImg = uploadForm.querySelector(".playlist-img-modal");
     const modalInputTitle = uploadForm.querySelector("input[type='text']");
     const modalTextarea = uploadForm.querySelector(".playlist-bio");
-    const fileInput = uploadForm.querySelector("input[type='file']");
+    const fileInput = document.getElementById("uploadCover");
+    const playlistImg = document.getElementById("playlistImage");
+
     const cancelBtn = uploadForm.querySelector(".playlist-cancel");
     const saveBtn = uploadForm.querySelector(".playlist-save");
 
@@ -135,6 +143,10 @@ export function initEditPlaylistUI() {
 
             sectionArtists.style.display = "none";
             sectionHit.style.display = "none";
+            artistHero.style.display = "none";
+            artistControl.style.display = "none";
+            artistPopular.style.display = "none";
+
             editSection.style.display = "flex";
             // uploadForm.classList.add("show");
         } catch (err) {
@@ -151,7 +163,8 @@ export function initEditPlaylistUI() {
     // Upload cover preview
     fileInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
-        if (file) modalImg.src = URL.createObjectURL(file);
+        if (!file) return;
+        playlistImg.src = URL.createObjectURL(file);
     });
 
     // Cancel
@@ -170,41 +183,98 @@ export function initEditPlaylistUI() {
         const updatedImage = fileInput.files[0];
 
         try {
-            let payload,
-                headers = {};
+            let newImage = null;
+
+            // ================== B1: Upload ảnh nếu có ==================
             if (updatedImage) {
-                payload = new FormData();
-                payload.append("name", updatedName);
-                payload.append("description", updatedDescription);
-                payload.append("image", updatedImage);
-            } else {
-                payload = {
-                    name: updatedName,
-                    description: updatedDescription,
-                };
-                headers["Content-Type"] = "application/json";
+                const formData = new FormData();
+                formData.append("cover", updatedImage);
+
+                console.log("📤 Uploading new cover:", updatedImage.name);
+                const uploadRes = await httpRequest.post(
+                    `/upload/playlist/${playlistId}/cover`,
+                    formData
+                );
+                console.log("✅ uploadRes:", uploadRes);
+
+                // === B1: Lấy đường dẫn ảnh mới ===
+                // Nếu backend chỉ trả path, ta tự nối domain
+                let newImage =
+                    uploadRes?.image_url ||
+                    uploadRes?.url ||
+                    uploadRes?.path ||
+                    null;
+
+                if (newImage && newImage.startsWith("/")) {
+                    newImage = `https://spotify.f8team.dev${newImage}`;
+                }
+
+                // Nếu vẫn chưa có, gọi lại GET để lấy playlist mới
+                if (!newImage) {
+                    const refreshed = await httpRequest.get(
+                        `/playlists/${playlistId}`
+                    );
+                    newImage = refreshed.image_url;
+                }
+
+                // === B2: Gửi PUT để gắn ảnh mới vào DB ===
+                if (newImage) {
+                    const payload = {
+                        name: updatedName,
+                        description: updatedDescription,
+                        image_url: newImage,
+                    };
+                    await httpRequest.put(`/playlists/${playlistId}`, payload, {
+                        headers: { "Content-Type": "application/json" },
+                    });
+
+                    modalImg.src = newImage;
+                    playlistImg.src = newImage;
+                    console.log("✅ Ảnh mới đã được cập nhật vào playlist!");
+                } else {
+                    console.warn("⚠️ Không tìm được URL ảnh mới từ server!");
+                }
             }
 
-            await httpRequest.put(`/playlists/${playlistId}`, payload, {
-                headers,
-            });
+            // ================== B2: PUT update playlist ==================
+            const payload = {
+                name: updatedName,
+                description: updatedDescription,
+            };
+            if (newImage) payload.image_url = newImage;
 
-            const updatedData = await httpRequest.get(
-                `/playlists/${playlistId}`
+            const updateRes = await httpRequest.put(
+                `/playlists/${playlistId}`,
+                payload,
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
             );
-            playlistImg.src = getPlaylistImage(updatedData.image_url);
-            playlistTitle.textContent = updatedData.name;
 
-            await showMyPlaylist(); // refresh sidebar
+            const updatedPlaylist = updateRes.playlist;
+            console.log("🎨 Updated playlist:", updatedPlaylist);
 
-            // Reset modal
+            // ================== B3: Update UI ==================
+            if (updatedPlaylist.image_url) {
+                modalImg.src = updatedPlaylist.image_url;
+                playlistImg.src = updatedPlaylist.image_url;
+            } else if (newImage) {
+                modalImg.src = newImage;
+                playlistImg.src = newImage;
+            }
+
+            playlistTitle.textContent = updatedPlaylist.name;
+            await showMyPlaylist();
+
+            // ================== B4: Reset modal ==================
             modalInputTitle.value = "";
             modalTextarea.value = "";
             fileInput.value = "";
-            modalImg.src = DEFAULT_IMG;
             uploadForm.classList.remove("show");
+
+            console.log("✅ Playlist cập nhật thành công!");
         } catch (err) {
-            console.error("Không thể update playlist", err);
+            console.error("❌ Không thể update playlist:", err);
         }
     });
 }

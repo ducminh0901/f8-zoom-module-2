@@ -28,7 +28,10 @@
                 <nav class="sidebar-nav">
                     <div class="nav-section">
                         <h2 class="section-title">Your Library</h2>
-                        <button class="create-btn">
+                        <button
+                            class="create-btn"
+                            data-tooltip="Create playlist"
+                        >
                             <i class="fas fa-plus"></i>
                             Create
                         </button>
@@ -50,7 +53,7 @@
                     </div>
 
                     <div class="search-library">
-                        <div class="search-library-btn">
+                        <div class="search-library-btn" data-tooltip="Search">
                             <i class="fas fa-search"></i>
                         </div>
                         <div class="sort-btn">
@@ -172,7 +175,10 @@
                 <header class="main-header">
                     <div class="search-container">
                         <div class="search-box">
-                            <button class="home-btn back-btn">
+                            <button
+                                class="home-btn back-btn"
+                                data-tooltip="Home"
+                            >
                                 <i class="fas fa-home"></i>
                             </button>
                             <div class="search-input-wrapper">
@@ -521,7 +527,7 @@
                                 <label for="uploadCover" class="upload-label">
                                     <img
                                         id="playlistImage"
-                                        src="placeholder.svg"
+                                        src="https://community.spotify.com/t5/image/serverpage/image-id/196380iDD24539B5FCDEAF9/image-size/medium?v=v2&px=400"
                                         alt="Playlist cover"
                                         class="playlist-img"
                                     />
@@ -618,37 +624,48 @@
                     </button>
                 </div>
 
+                <audio src="" id="audio"></audio>
+
                 <div class="player-center">
                     <div class="player-controls">
                         <button
-                            class="control-btn active"
+                            class="control-btn shuffle-btn"
                             data-tooltip="Shuffle"
                         >
                             <i class="fas fa-random"></i>
                         </button>
-                        <button class="control-btn" data-tooltip="Previous">
+                        <button
+                            class="control-btn prev-btn"
+                            data-tooltip="Previous"
+                        >
                             <i class="fas fa-step-backward"></i>
                         </button>
                         <button
                             class="control-btn play-btn"
-                            data-tooltip="Play/Pause"
+                            data-tooltip="Play"
                         >
-                            <i class="fas fa-pause"></i>
+                            <i class="fas fa-play"></i>
                         </button>
-                        <button class="control-btn" data-tooltip="Next">
+                        <button
+                            class="control-btn next-btn"
+                            data-tooltip="Next"
+                        >
                             <i class="fas fa-step-forward"></i>
                         </button>
-                        <button class="control-btn" data-tooltip="Repeat">
+                        <button
+                            class="control-btn repeat-btn"
+                            data-tooltip="Repeat"
+                        >
                             <i class="fas fa-redo"></i>
                         </button>
                     </div>
                     <div class="progress-container">
-                        <span class="time">0:52</span>
+                        <span class="time current-time">0:52</span>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: 20%"></div>
                             <div class="progress-handle"></div>
                         </div>
-                        <span class="time">4:59</span>
+                        <span class="time duration">4:59</span>
                     </div>
                 </div>
 

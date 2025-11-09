@@ -14,6 +14,13 @@ import {
     initEditPlaylistUI,
 } from "./components/playlists.js";
 
+import { initTrackCardsListerner } from "./components/tracks.js";
+import {
+    initPlayerControls,
+    initPlayer,
+    handleVolumeAudio,
+} from "./components/tracks.js";
+
 // Auth Modal Functionality
 document.addEventListener("DOMContentLoaded", function () {
     // Get DOM elements
@@ -289,7 +296,6 @@ document.querySelector(".artists-grid").addEventListener("click", (e) => {
 document.addEventListener("DOMContentLoaded", async function () {
     initBackToHome();
 
-    initSidebar();
     searchInSidebar();
 
     await showMyPlaylist(); // render liked + user playlists
@@ -299,4 +305,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     initEditPlaylistUI();
     initContextMenu();
     filterButtons();
+
+    // PLAY MUSIC
+    initTrackCardsListerner();
+
+    initPlayerControls();
+
+    initPlayer();
+
+    handleVolumeAudio();
 });

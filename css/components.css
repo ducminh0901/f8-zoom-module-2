@@ -367,6 +367,8 @@
 
 /* Library items */
 .library-item {
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
@@ -448,6 +450,7 @@
 /* LIST */
 .compact-list {
     display: flex;
+    flex-direction: column;
 }
 
 .compact-list .item-image,
@@ -485,7 +488,6 @@
 .compact-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* 2 cột */
-    gap: 12px;
 }
 .compact-grid .library-item {
     width: 100%;
@@ -1118,6 +1120,7 @@
 
 /* Add button */
 .add-btn {
+    position: relative;
     width: 20px;
     height: 20px;
     border: 1.5px solid currentColor;

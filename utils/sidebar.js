@@ -1,4 +1,8 @@
-let currentSortType = "recent"; // Mặc định là recent
+import httpRequest from "../utils/httpRequest.js";
+import { showMyPlaylist } from "../components/playlists.js";
+
+let currentSortType = "recent";
+// Hàm sắp xếp và render lại playlist
 
 export function initSidebar() {
     const sortBtn = document.querySelector(".sort-btn");
@@ -55,6 +59,7 @@ export function initSidebar() {
     });
 
     // === 3. Đổi view style (grid/list) ===
+    // === 3. Đổi view style (grid/list) ===
     icons.forEach((icon) => {
         icon.addEventListener("click", () => {
             document
@@ -69,20 +74,21 @@ export function initSidebar() {
                 "default-list": "fa-list",
                 "compact-list": "fa-bars",
             };
-            const newIconClass = iconMap[viewStyle] || "fa-list"; // fallback
+            const newIconClass = iconMap[viewStyle] || "fa-list";
 
-            // Đổi layout cho items
-            items.forEach((item) => {
-                item.classList.remove(
+            // ✅ chỉ gắn class layout cho container (cha)
+            const container = document.querySelector(".library-content-liked");
+            if (container) {
+                container.classList.remove(
                     "compact-list",
                     "default-list",
                     "compact-grid",
                     "default-grid"
                 );
-                item.classList.add(viewStyle);
-            });
+                container.classList.add(viewStyle);
+            }
 
-            // Đổi icon trong sort-btn
+            // ✅ Đổi icon trong sort-btn
             if (mainIcon) {
                 mainIcon.className = `fas sort-view-icon ${newIconClass}`;
             }
@@ -135,86 +141,135 @@ export function searchInSidebar() {
 // Tạo context menu
 
 export function initContextMenu() {
-    const libraryItems = document.querySelectorAll(".library-item");
+    const container = document.querySelector(".library-content-liked");
 
-    libraryItems.forEach((item) => {
-        item.addEventListener("contextmenu", (e) => {
-            e.preventDefault();
+    container.addEventListener("contextmenu", async (e) => {
+        const item = e.target.closest(".library-item");
+        if (!item) return;
+        e.preventDefault();
 
-            document.querySelector(".context-menu")?.remove();
+        // Xoá menu cũ nếu có
+        document.querySelector(".context-menu")?.remove();
 
-            const menu = document.createElement("div");
-            menu.className = "context-menu";
-            Object.assign(menu.style, {
-                position: "absolute",
-                top: `${e.pageY}px`,
-                left: `${e.pageX}px`,
-                background: "#222",
-                color: "#fff",
-                padding: "8px",
-                borderRadius: "6px",
-                zIndex: 1000,
-                minWidth: "160px",
+        const menu = document.createElement("div");
+        menu.className = "context-menu";
+        Object.assign(menu.style, {
+            position: "absolute",
+            top: `${e.pageY}px`,
+            left: `${e.pageX}px`,
+            background: "#222",
+            color: "#fff",
+            padding: "8px",
+            borderRadius: "6px",
+            zIndex: 1000,
+            minWidth: "160px",
+        });
+
+        // Lấy type và id đúng
+        const type = item.dataset.type;
+        let id;
+        if (type === "playlist") id = item.dataset.playlistId;
+        else if (type === "artist") id = item.dataset.artistId;
+
+        menu.dataset.id = id;
+        menu.dataset.type = type;
+
+        // Helper tạo menu item
+        function addMenuItem(iconClass, text, className, onClick) {
+            const div = document.createElement("div");
+            Object.assign(div.style, {
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "6px 8px",
+                cursor: "pointer",
             });
 
-            const type = item.dataset.type;
+            const icon = document.createElement("i");
+            icon.className = iconClass;
+            if (text === "Unfollow") icon.style.color = "#1db954";
+            div.append(icon);
 
-            function addMenuItem(iconClass, text) {
-                const div = document.createElement("div");
-                Object.assign(div.style, {
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "6px 8px",
-                    cursor: "pointer",
-                });
+            const span = document.createElement("span");
+            span.textContent = text;
+            div.append(span);
 
-                const icon = document.createElement("i");
-                icon.className = iconClass;
-                if (text === "Unfollow") {
-                    icon.style.color = "#1db954";
-                }
-                div.appendChild(icon);
+            div.addEventListener(
+                "mouseenter",
+                () => (div.style.background = "#333")
+            );
+            div.addEventListener(
+                "mouseleave",
+                () => (div.style.background = "transparent")
+            );
 
-                const span = document.createElement("span");
-                span.textContent = text;
-                div.appendChild(span);
+            div.addEventListener("click", async () => {
+                menu.remove();
+                if (onClick) await onClick(id);
+            });
 
-                div.addEventListener(
-                    "mouseenter",
-                    () => (div.style.backgroundColor = "#333")
-                );
-                div.addEventListener(
-                    "mouseleave",
-                    () => (div.style.backgroundColor = "transparent")
-                );
+            div.classList.add(className);
+            menu.appendChild(div);
+        }
 
-                div.addEventListener("click", () => {
-                    menu.remove();
-                });
+        // Tạo các option menu
+        if (type === "artist") {
+            addMenuItem(
+                "fa-solid fa-x",
+                "Unfollow",
+                "unfollow-artist-btn",
+                unfollowArtist
+            );
+            addMenuItem(
+                "fa-solid fa-ban",
+                "Don't play this artist",
+                "ban-artist-btn"
+            );
+        } else if (type === "playlist") {
+            addMenuItem(
+                "fas fa-minus-circle",
+                "Remove from profile",
+                "remove-playlist-btn"
+            );
+            addMenuItem(
+                "fas fa-trash",
+                "Delete",
+                "delete-playlist-btn",
+                deletePlaylist
+            );
+        }
 
-                menu.appendChild(div);
+        document.body.appendChild(menu);
+
+        // Click ngoài để đóng menu
+        const removeMenu = (e2) => {
+            if (!menu.contains(e2.target)) {
+                menu.remove();
+                document.removeEventListener("click", removeMenu);
             }
-
-            if (type === "artist") {
-                addMenuItem("fa-solid fa-x", "Unfollow");
-                addMenuItem("fa-solid fa-ban", "Don't play this artist");
-            } else if (type === "playlist") {
-                addMenuItem("fas fa-minus-circle", "Remove from profile");
-                addMenuItem("fas fa-trash", "Delete");
-            }
-
-            document.body.appendChild(menu);
-
-            const removeMenu = (e2) => {
-                if (!menu.contains(e2.target)) {
-                    menu.remove();
-                    document.removeEventListener("click", removeMenu);
-                }
-            };
-            document.addEventListener("click", removeMenu);
-        });
+        };
+        document.addEventListener("click", removeMenu);
     });
+}
+
+// 🧨 Hàm xử lý hành động
+async function deletePlaylist(playlistId) {
+    if (!playlistId) return;
+    try {
+        await httpRequest.delete(`/playlists/${playlistId}`);
+        await showMyPlaylist();
+    } catch (err) {
+        console.error("Lỗi khi xoá playlist:", err.message || err);
+    }
+}
+
+async function unfollowArtist(artistId) {
+    if (!artistId) return;
+    try {
+        await httpRequest.delete(`/artists/unfollow/${artistId}`);
+    } catch (err) {
+        console.error("Lỗi khi unfollow:", err);
+    }
 }
 
 export function filterButtons() {

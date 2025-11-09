@@ -212,6 +212,11 @@
     transition: opacity 0.2s;
 }
 
+.tooltip-bottom {
+    top: 125%;
+    bottom: auto;
+}
+
 .progress-container {
     display: flex;
     align-items: center;

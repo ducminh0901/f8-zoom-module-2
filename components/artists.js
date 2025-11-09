@@ -1,5 +1,3 @@
-import { handleDetailClick } from "./detail.js";
-
 export async function renderArtists(artists) {
     const containerArtist = document.querySelector(".artists-grid");
     containerArtist.innerHTML = "";
@@ -29,14 +27,6 @@ export async function renderArtists(artists) {
             </div>
         `;
 
-        const playBtn = cardArtist.querySelector(".artist-play-btn");
-        playBtn.addEventListener("click", () => {
-            console.log(`Playing playlist: ${artist.name}`);
-        });
-
-        cardArtist.addEventListener("click", () =>
-            handleDetailClick(cardArtist)
-        );
         containerArtist.appendChild(cardArtist);
     });
 }
