@@ -468,6 +468,7 @@
 
 .default-list {
     display: flex;
+    flex-direction: column;
 }
 .default-list .item-image {
     display: block;
@@ -480,54 +481,65 @@
 .default-list .item-title {
     display: block;
 }
-.default-list .item-subtitle {
-    display: inline-block;
-}
 
-/* GRID */
+/* Bật chế độ grid */
 .compact-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 cột */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
 }
+
+/* Mỗi item luôn vuông */
 .compact-grid .library-item {
-    width: 100%;
-}
-.compact-grid .item-image {
-    display: block;
-    width: 94px;
-    height: 94px;
-}
-.compact-grid .item-icon {
     display: flex;
-    width: 94px;
-    height: 94px;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
 }
-.compact-grid .item-title,
-.compact-grid .item-subtitle {
+
+/* Icon hoặc image chiếm toàn bộ item */
+.compact-grid .item-icon,
+.compact-grid .item-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+/* Ẩn text */
+.compact-grid .item-info {
     display: none;
 }
 
 .default-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.default-grid .library-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    aspect-ratio: 1 / 1;
+}
+
+.default-grid .item-icon,
+.default-grid .item-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.default-grid .item-info {
+    width: 100%;
     display: flex;
     flex-direction: column;
-}
-
-.default-grid .item-icon {
-    display: flex;
-    width: 94px;
-    height: 94px;
-}
-
-.default-grid .item-image {
-    display: block;
-    width: 94px;
-    height: 94px;
-}
-.default-grid .item-title {
-    display: block;
-}
-.default-grid .item-subtitle {
-    display: inline-block;
 }
 
 /* Artist Hero */

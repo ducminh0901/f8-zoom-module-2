@@ -4,8 +4,15 @@ import { initSidebar } from "../utils/sidebar.js";
 const DEFAULT_IMG =
     "https://community.spotify.com/t5/image/serverpage/image-id/196380iDD24539B5FCDEAF9/image-size/medium?v=v2&px=400";
 
+const LIKE_IMG =
+    "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84e913f0317b78a75653c17e22";
+
 function getPlaylistImage(imgUrl) {
     return imgUrl || DEFAULT_IMG;
+}
+
+function getLikedImage(imgLike) {
+    return imgLike || LIKE_IMG;
 }
 
 // ================== Render ==================
@@ -25,16 +32,16 @@ function renderLikedPlaylist(data) {
             }">
                 ${
                     item.name === "Liked Songs"
-                        ? `<div class="item-icon liked-songs"><i class="fas fa-heart"></i></div>`
+                        ? `<img src="${getLikedImage()}" class="item-image"/>`
                         : `<img src="${getPlaylistImage(
                               item.image_url
-                          )}" alt="${item.name}" class="item-image" />`
+                          )}" class="item-image"/>`
                 }
                 <div class="item-info">
                     <div class="item-title">${item.name}</div>
-                    <div class="item-subtitle">Danh sách phát • ${
+                    <div class="item-subtitle">Playlist • ${
                         item.total_tracks
-                    } bài hát</div>
+                    } songs</div>
                 </div>
             </div>
         `
